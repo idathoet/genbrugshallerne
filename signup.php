@@ -1,8 +1,4 @@
-<?php 
-    include_once 'header.php';
-?>
-
-    <section class="signup-form">
+<section class="signup-form">
         <h2>Sign up</h2>
         <div class="signup-form-form">
          <form action="includes/signup.inc.php" method="post">
@@ -18,9 +14,3 @@
         </form>
       </div>
     </section>
-
-
-
-<?php 
-    include_once 'footer.php';
-?>
