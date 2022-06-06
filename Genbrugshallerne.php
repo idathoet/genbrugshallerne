@@ -13,12 +13,20 @@ function getAllStande(){
 
    $sql = "SELECT stand.*, stand_pictures.link 
    FROM stand, stand_pictures
-   WHERE stand_pictures.standID AND stand.ID = $id";
+   WHERE stand_pictures.standID = stand.ID";
    $result = $connect->get_results($sql);
-
-   return $result;
+   foreach($result as $key => $row) {
+      $stand .= '<a href="/stand-'.$row->ID.'" class="stand-link">
+      <img src="/wp-content/uploads/user-uploads/'.$row->link.'" alt="" class="stand-thumb">
+	  <div class="stand-link-wrap">
+      <h2 class="stand-name">'.$row->title.'</h2>
+      <span class="tag"></span>
+	  </div>
+      </a>';
+   }
+   return $stand;
 }
-
+add_shortcode('fremvis_stande', 'getAllStande');
 
 function getStand($id){
    global $connect;
@@ -27,9 +35,11 @@ function getStand($id){
    FROM stand, stand_pictures, pictures
    WHERE pictures.standID = stand.ID AND stand_pictures.standID = stand.ID AND stand.ID = $id";
    $result = $connect->get_results($sql);
+   $row = $result->fetch_object();
 
    return $result;
 }  
+add_shortcode('get_stand', 'getStand');
 
 
 function getTags(){
@@ -79,9 +89,9 @@ function uploadPicture(){
       && in_array($extension, $allowedExts))
 
    {
-    if ($_FILES["file"]["error"] > 0) {
-     echo "Return Code: " . $_FILES["file"]["error"] . "<br />";
-  } else {
+     if ($_FILES["file"]["error"] > 0) {
+       echo "Return Code: " . $_FILES["file"]["error"] . "<br />";
+    } else {
 
   // Verifikation:
   // echo "Upload: " . $_FILES["file"]["name"] . "<br />";
@@ -89,20 +99,20 @@ function uploadPicture(){
   //  echo "Size: " . ($_FILES["file"]["size"] / 1024) . " Kb<br />";
   //  echo "Temp file: " . $_FILES["file"]["tmp_name"] . "<br />";
 
-     if (file_exists("../../uploads/user-uploads/" . $_FILES["file"]["name"])){
-      echo $_FILES["file"]["name"] . " already exists. ";
-   } else {
-      move_uploaded_file($_FILES["file"]["tmp_name"],
-         "../../uploads/user-uploads/" . $_FILES["file"]["name"]);
+       if (file_exists("../../uploads/user-uploads/" . $_FILES["file"]["name"])){
+         echo $_FILES["file"]["name"] . " already exists. ";
+      } else {
+         move_uploaded_file($_FILES["file"]["tmp_name"],
+            "../../uploads/user-uploads/" . $_FILES["file"]["name"]);
 
     //  echo "Stored in: " . "../media/" . $_FILES["file"]["name"];
-      header("Location:../upload-done.php");
+         header("Location:../upload-done.php");
+      }
    }
-}
 } else {
- echo "Return Code: " . $_FILES["file"]["name"] . "<br />";
- echo "Invalid file";
- print_r($_FILES);
+  echo "Return Code: " . $_FILES["file"]["name"] . "<br />";
+  echo "Invalid file";
+  print_r($_FILES);
 }
 }
 
